@@ -9,9 +9,10 @@ from setuptools import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 setup(
     name='django-csv-exporter',
-    version='1.0',
+    version='1.1',
     author='Joseph Solomon',
     author_email='josephs@isl.co',
     description=('A django package to export data in a csv with File export.'),
