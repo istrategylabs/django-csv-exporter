@@ -86,6 +86,16 @@ def send_email_to_user(file_url, timedelta, emails, subject='Your data export is
         logger.debug('Exporter failed sending email: {}'.format(e))
 
 
+def get_protocol():
+    protocol = 'http'
+    if settings.SECURE_SSL_REDIRECT:
+        protocol = 'https'
+    # Used for projects that support protcol settings
+    if hasattr(settings, 'PROTOCOL'):
+        protocol = settings.PROTOCOL
+    return protocol
+
+
 def export(queryset, attributes, callback=None, timedelta=datetime.timedelta(days=2)):
     with tempfile.TemporaryDirectory() as tmpdirname:
         zip_path = os.path.join(tmpdirname, 'data.zip')
@@ -120,7 +130,8 @@ def export(queryset, attributes, callback=None, timedelta=datetime.timedelta(day
         else:
             zip_url = default_storage.url(zip_name)
         if not zip_url.startswith('http'):
-            zip_url = '{}://{}{}'.format(settings.PROTOCOL,
+            protocol = get_protocol()
+            zip_url = '{}://{}{}'.format(protocol,
                                          Site.objects.get_current().domain,
                                          zip_url)
 
