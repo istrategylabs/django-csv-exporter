@@ -13,7 +13,7 @@ pip install django-csv-exporter
 ### To use the package
 
 ```
-def export(queryset, attributes, callback=None, timedelta=datetime.timedelta(days=2)):
+def export(query_or_queryset, attributes, callback=None, timedelta=datetime.timedelta(days=2)):
 ```
 
 ```
@@ -33,4 +33,6 @@ The function `send_email_to_user` is a helper function to send the zip_url to th
 ```
 import django_rq
 django_rq.enqueue(export, users, ('full_name', 'profile_picture', 'team.name', 'date_joined.isoformat'), callback, timedelta(days=2))
+# To save memory in redis you can also pass just the query instead of the QuerySet/list
+django_rq.enqueue(export, users.query, ('full_name', 'profile_picture', 'team.name', 'date_joined.isoformat'), callback, timedelta(days=2))
 ```

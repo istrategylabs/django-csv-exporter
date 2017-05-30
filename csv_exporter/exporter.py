@@ -14,7 +14,7 @@ except ImportError:
     from django.utils.encoding import force_unicode as force_text
 from django.utils.encoding import smart_text
 from django.db.models.query import QuerySet
-from django.db.models import FileField
+from django.db.models import FileField, sql
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
@@ -96,7 +96,7 @@ def get_protocol():
     return protocol
 
 
-def export(queryset, attributes, callback=None, timedelta=datetime.timedelta(days=2)):
+def export(query_or_queryset, attributes, callback=None, timedelta=datetime.timedelta(days=2)):
     with tempfile.TemporaryDirectory() as tmpdirname:
         zip_path = os.path.join(tmpdirname, 'data.zip')
         with ZipFile(zip_path, mode='w') as zipfile:
@@ -104,6 +104,10 @@ def export(queryset, attributes, callback=None, timedelta=datetime.timedelta(day
             with open(csv_path, mode='w+') as tempcsv:
                 csv_writer = csv.DictWriter(tempcsv, fieldnames=[force_text(field) for field in attributes])
                 csv_writer.writeheader()
+                if isinstance(query_or_queryset, sql.Query):
+                    queryset = QuerySet(query=query_or_queryset)
+                else:
+                    queryset = query_or_queryset
 
                 if isinstance(queryset, QuerySet):
                     # Iterate without the queryset cache, to avoid wasting memory when

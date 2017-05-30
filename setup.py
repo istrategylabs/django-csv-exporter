@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name='django-csv-exporter',
-    version='1.1',
+    version='1.2',
     author='Joseph Solomon',
     author_email='josephs@isl.co',
     description=('A django package to export data in a csv with File export.'),
